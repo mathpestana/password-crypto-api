@@ -11,13 +11,13 @@ const PasswordController = {
    */
   encryptPassword: async (req, res) => {
     try {
-      // Verifica se os dados vêm do body ou query
-      const password = req.body.password || req.query.password;
+      // Aceita tanto query parameter quanto body
+      const password = req.query.password || req.body.password;
       
       if (!password) {
         return res.status(400).json({
           success: false,
-          message: 'Senha não fornecida. Envie a senha no corpo da requisição ou como parâmetro.'
+          message: 'Senha não fornecida. Use ?password=suaSenha na URL ou envie no body da requisição'
         });
       }
       
@@ -44,13 +44,13 @@ const PasswordController = {
    */
   validatePassword: (req, res) => {
     try {
-      // Verifica se os dados vêm do body ou query
-      const password = req.body.password || req.query.password;
+      // Aceita tanto query parameter quanto body
+      const password = req.query.password || req.body.password;
       
       if (!password) {
         return res.status(400).json({
           success: false,
-          message: 'Senha não fornecida. Envie a senha no corpo da requisição ou como parâmetro.'
+          message: 'Senha não fornecida. Use ?password=suaSenha na URL ou envie no body da requisição'
         });
       }
       
@@ -80,16 +80,14 @@ const PasswordController = {
    */
   generatePassword: (req, res) => {
     try {
-      // Verifica se os dados vêm do body ou query
-      const body = req.body;
-      const query = req.query;
+      const { length, numbers, symbols, uppercase, lowercase } = req.query;
       
       const options = {
-        length: parseInt(body.length || query.length) || 12,
-        numbers: body.numbers !== undefined ? body.numbers : (query.numbers !== 'false'),
-        symbols: body.symbols !== undefined ? body.symbols : (query.symbols !== 'false'),
-        uppercase: body.uppercase !== undefined ? body.uppercase : (query.uppercase !== 'false'),
-        lowercase: body.lowercase !== undefined ? body.lowercase : (query.lowercase !== 'false')
+        length: length ? parseInt(length) : 12,
+        numbers: numbers !== 'false',
+        symbols: symbols !== 'false',
+        uppercase: uppercase !== 'false',
+        lowercase: lowercase !== 'false'
       };
       
       const result = PasswordModel.generatePassword(options);
